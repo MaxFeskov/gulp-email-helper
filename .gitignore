@@ -1,0 +1,41 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Results
+build
+*.html
+*.template
+src/scss/helpers/*.scss
+
+# Ignore testing data (delete from real project)
+src/img
+src/scss/*.scss
+!src/scss/_main.scss
+!src/scss/_variable.scss
+!src/scss/style.scss
+!src/scss/fonts.scss
+src/scss/block
+src/scss/element
+src/scss/section
+src/scss/custom/*.scss
+src/scss/variable/*.scss
+src/data/en/custom
+src/data/en/*.json
+src/data/ru/custom
+src/data/ru/*.json
+!src/data/en/_all.json
+!src/data/ru/_all.json
+
+# Lock files
+package-lock.json
