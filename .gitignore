@@ -16,6 +16,7 @@ node_modules
 build
 *.html
 *.template
+*.mail
 src/scss/helpers/*.scss
 
 # Ignore testing data (delete from real project)

@@ -1,0 +1,77 @@
+//- @pugdoc
+  name: tdBgBlock
+  description: Блочный миксин для генерации +td блоков с фоновой картинкой и vml фалбеком для Outlook.
+  arguments:
+    - {string} [image] - Ссылка на картинку
+    - {string} [fallbackColor] - Фоновый цвет блока, если картинка не отображается
+  attributes:
+    - {number} [width] - Ширина таблицы/ячейки
+    - {number} [height] - Высота таблицы/ячейки
+    - {any} [attrs] - Можно передавать любой аттрибут, с любым именем и значением. Применятся только к +td()
+  examples:
+    - |
+      include _mixins
+      +tdBgBlock('https://ya.ru/image.jpeg', '#fff')(width=200 height=100)
+        span Внутри bgBlock может находиться любой контент. Так как "входная" разметка, обёрнута в div
+      // break
+    - |
+      include _mixins
+      +tdBgBlock('https://ya.ru/image.jpeg', '#fff')(width=200 height=100)
+        +table: tr: +td: a(href='#') Внутри bgBlock может находиться любой контент. Так как "входная" разметка, обёрнута в div
+      // break
+mixin tdBgBlock(image, fallbackColor, fitToContent = false)
+  -
+    var $styles = {};
+    var $stylesStroke = '';
+    attributes.width ? $styles.width = attributes.width : null;
+    attributes.height ? $styles.height = attributes.height : null;
+
+    for (var i in $styles)
+    if (typeof +$styles[i] === 'number' && !isNaN(+$styles[i])) {
+    $stylesStroke+=`${i}:${$styles[i]}px;`;
+    } else {
+    $stylesStroke+=`${i}:${$styles[i]};`;
+    }
+
+  +td()(background=image bgcolor=fallbackColor style="background-repeat:no-repeat;")&attributes(attributes)
+    +ifMso()
+      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="#{$stylesStroke}">
+      <v:fill type="tile" src="#{image}" color="#{fallbackColor}" />
+      <v:textbox style="mso-fit-shape-to-text:#{fitToContent}" inset="0,0,0,0">
+    if fitToContent
+      div(): block
+    else
+      div(style=`height:${attributes.height}px;`): block
+    +ifMso()
+      <p style="margin:0;mso-hide:all"><o:p xmlns:o="urn:schemas-microsoft-com:office:office">&nbsp;</o:p></p>
+      </v:textbox>
+      </v:rect>
+
+Murat Atila, [25.02.18 22:12]
+mixin spacer(offset, horizontal, bgDefaultColor)
+  include _helpers
+
+  - let $common = { "font-size":"0", "line-height":"0" }
+  - let $styles = removeDuplicates({}, $common, convert2object("display:block;"))
+  - let rootTag = attributes.rootTag ? attributes.rootTag : horizontal ? 'td' : 'tr'
+  - let $width = horizontal ? offset : null
+  - let $height = horizontal ? null : offset
+  - let baseBgColor = bgDefaultColor ? bgDefaultColor : 'transparent';
+
+  +rootTag(rootTag)(height=$height width=$width style=$common bgcolor=baseBgColor)&attributes(attributes)
+    div(style=`overflow:hidden;font-size:0;line-height:0;background-color:${baseBgColor}; ${$height ? 'height:'+$height+'px;': ''}${$width ? 'width:'+$width+'px;': ''}${attributes.style ? attributes.style: ''}`)
+      font(size="0" style=`font-size:0px;line-height:0px;display:block;background-color:${baseBgColor};mso-line-height-alt:0;mso-margin-top-alt:0;`)
+        span(style=`font-size:0px;line-height:0px;display:block;background-color:${baseBgColor};mso-line-height-alt:0;mso-margin-top-alt:0;`)
+
+Murat Atila, [25.02.18 22:15]
+//- Отступы между эементами вертикальные и горизонтальные
+//- @param (number) offset - высота/ширина отступа
+//- @param [boolean=false] horizontal - по умолчанию, отступ вертикальный.
+//-
+//- @use +spacer(24)
+//- @use +spacer(24, true)
+mixin spacer(offset, horizontal)
+  if horizontal
+    td(width=offset size="0" style='font-size:0px; line-height:0px;' valign="top")&attributes(attributes): font(size="0" style='font-size:0px; line-height:0px;display:block;'): span(style='font-size:0px; line-height:0px;display:block;') &nbsp;
+  else
+    tr: td(height=offset size="0" style='font-size:0px; line-height:0px;' valign='top')&attributes(attributes): font(size="0" style='font-size:0px; line-height:0px;display:block;'): span(style='font-size:0px; line-height:0px;display:block;') &nbsp;

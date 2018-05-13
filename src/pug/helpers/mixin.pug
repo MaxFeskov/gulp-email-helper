@@ -1,0 +1,48 @@
+mixin table(width, height)
+  table(width=width height=height align="center" cellpadding="0" cellspacing="0" border="0" bgcolor="transparent" style="margin: 0; padding: 0;")&attributes(attributes)
+    tbody
+      if block
+        block
+
+mixin td(width, height)
+  td(width=width height=height valign="top" align="left")&attributes(attributes)
+    if block
+      block
+
+mixin mso()
+  if block
+    <!--[if mso]>
+      block
+    <![endif]-->
+
+mixin bg(bgImage, bgColor, fitToContent = false)
+  -
+    let $styles = {};
+    let $stylesStroke = '';
+    attributes.width ? $styles.width = attributes.width : null;
+    attributes.height ? $styles.height = attributes.height : null;
+
+    for (let i in $styles) {
+      if (typeof +$styles[i] === 'number' && !isNaN(+$styles[i])) {
+        $stylesStroke+=`${i}:${$styles[i]}px;`;
+      } else {
+        $stylesStroke+=`${i}:${$styles[i]};`;
+      }
+    }
+
+  +td()(background=bgImage bgcolor=bgColor style="background-repeat:no-repeat;")&attributes(attributes)
+    +mso()
+      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="#{$stylesStroke}">
+      <v:fill type="tile" src="#{bgImage}" color="#{bgColor}" />
+      <v:textbox style="mso-fit-shape-to-text:#{fitToContent}" inset="0,0,0,0">
+
+    if fitToContent
+      div(): block
+    else
+      div(style=`height:${attributes.height}px;`): block
+
+    +mso()
+      <p style="margin:0;mso-hide:all"><o:p xmlns:o="urn:schemas-microsoft-com:office:office">&nbsp;</o:p></p>
+      </v:textbox>
+      </v:rect>
+

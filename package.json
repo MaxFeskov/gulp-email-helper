@@ -23,6 +23,7 @@
     "gulp-eol": "^0.2.0",
     "gulp-ext-replace": "^0.3.0",
     "gulp-htmllint": "0.0.14",
+    "gulp-htmlmin": "^4.0.0",
     "gulp-imagemin": "^4.1.0",
     "gulp-inline-css": "^3.3.0",
     "gulp-insert": "^0.5.0",

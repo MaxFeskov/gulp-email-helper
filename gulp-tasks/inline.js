@@ -33,6 +33,9 @@ gulp.task('build:inline', () =>
     .pipe($.insert.append(path.src.lineending))
     .pipe($.htmllint())
     .pipe($.ext_replace('.html'))
+    .pipe(gulp.dest(path.build.inline))
+    .pipe($.ext_replace('.mail'))
+    .pipe($.htmlmin({collapseWhitespace: true}))
     .pipe(gulp.dest(path.build.inline)));
 
 gulp.task('dev:inline', gulp.series('build:inline'));
